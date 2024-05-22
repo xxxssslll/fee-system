@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收费系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="submit"] {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>收费系统</h1>
+    <div id="form">
+        <label for="name">姓名:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="class">班级:</label>
+        <input type="text" id="class" name="class" required>
+        <input type="submit" value="查询费用" onclick="checkFees()">
+    </div>
+    <p id="result"></p>
+    <script>
+        async function loadCSV() {
+            const response = await fetch('fees.csv');
+            const data = await response.text();
+            const rows = data.split('\n').slice(1);
+            return rows.map(row => {
+                const cols = row.split(',');
+                return {
+                    name: cols[0].trim(),
+                    class: cols[1].trim(),
+                    total: cols[5].trim()
+                };
+            });
+        }
+
+        async function checkFees() {
+            const name = document.getElementById('name').value.trim();
+            const className = document.getElementById('class').value.trim();
+            const feesData = await loadCSV();
+
+            const result = feesData.find(fee => fee.name === name && fee.class === className);
+            const resultElement = document.getElementById('result');
+
+            if (result) {
+                resultElement.textContent = `您好, ${name} 同学, 您需要交纳的总费用是: ${result.total} 元`;
+            } else {
+                resultElement.textContent = '未找到匹配的记录，请确认您的姓名和班级是否正确';
+            }
+        }
+    </script>
+</body>
+</html>
