@@ -54,6 +54,30 @@
             max-width: 400px;
             text-align: center;
         }
+        button#payButton {
+            display: none;
+            margin-top: 20px;
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button#payButton:hover {
+            background-color: #007bb5;
+        }
+        #paymentCode {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        #paymentCode img {
+            max-width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -66,6 +90,11 @@
         <input type="submit" value="查询费用" onclick="checkFees()">
     </div>
     <p id="result"></p>
+    <button id="payButton" onclick="showPaymentCode()">付款</button>
+    <div id="paymentCode">
+        <p>请使用以下付款码完成支付：</p>
+        <img src="./1.jpg" alt="付款码">
+    </div>
     <script>
         async function loadCSV() {
             const response = await fetch('fees.csv');
@@ -88,12 +117,20 @@
 
             const result = feesData.find(fee => fee.name === name && fee.class === className);
             const resultElement = document.getElementById('result');
+            const payButton = document.getElementById('payButton');
 
             if (result) {
                 resultElement.textContent = `您好, ${name} 同学, 您需要交纳的总费用是: ${result.total} 元`;
+                payButton.style.display = 'block';
             } else {
                 resultElement.textContent = '未找到匹配的记录，请确认您的姓名和班级是否正确';
+                payButton.style.display = 'none';
             }
+        }
+
+        function showPaymentCode() {
+            const paymentCode = document.getElementById('paymentCode');
+            paymentCode.style.display = 'block';
         }
     </script>
 </body>
